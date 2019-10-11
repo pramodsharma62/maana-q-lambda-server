@@ -10,8 +10,13 @@ input FunctionInput {
   code: String
 }
 
+input Person {
+  name: String!
+  dob: String!
+}
+
 type Query {
-  apply(id: ID!, params: String!): String!
+  age(person: Person!): Int!
   list: [Function!]!
 }
 

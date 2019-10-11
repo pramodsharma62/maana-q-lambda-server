@@ -16,6 +16,7 @@
     "apollo-server-express": "^2.9.6",
     "express": "^4.17.1",
     "graphql": "^14.5.8",
+    "lru-cache": "^5.1.1",
     "mongoose": "^5.7.4",
     "schemaglue": "^4.0.4"
   },
