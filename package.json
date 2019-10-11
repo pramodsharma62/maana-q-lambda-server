@@ -1,0 +1,36 @@
+{
+  "name": "maana-q-function-assist-logic",
+  "version": "1.0.0",
+  "description": "A service that does something",
+  "main": "src/index.js",
+  "author": "Maana, Inc.",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "serve": "NODE_ENV=PRODUCTION node src/index.js"
+  },
+  "keywords": [
+    "maana"
+  ],
+  "dependencies": {
+    "apollo-server-express": "^2.9.6",
+    "express": "^4.17.1",
+    "graphql": "^14.5.8",
+    "mongoose": "^5.7.4",
+    "schemaglue": "^4.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-import": "^0.13.0",
+    "eslint-config-node": "^4.0.0",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "nodemon": "^1.19.3",
+    "prettier": "^1.18.2"
+  }
+}

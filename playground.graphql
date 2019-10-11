@@ -1,0 +1,32 @@
+mutation create {
+  foo1: createFoo(name: "foo1", bar: 2) {
+    name
+    bar
+  }
+  foo2: createFoo(name: "foo2", bar: 2) {
+    name
+    bar
+  }
+}
+
+mutation delete {
+  foo1: deleteFoo(name: "foo1") {
+    name
+    bar
+  }
+  foo2: deleteFoo(name: "foo2") {
+    name
+    bar
+  }
+}
+
+query total {
+  totalBar
+}
+
+query foo {
+  foo(name: "foo1") {
+    name
+    bar
+  }
+}

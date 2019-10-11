@@ -1,0 +1,21 @@
+type Function {
+  id: ID!
+  name: String!
+  code: String!
+}
+
+input FunctionInput {
+  id: ID!
+  name: String
+  code: String
+}
+
+type Query {
+  apply(id: ID!, params: String!): String!
+  list: [Function!]!
+}
+
+type Mutation {
+  create(input: FunctionInput!): Function!
+  delete(id: ID!): ID!
+}
