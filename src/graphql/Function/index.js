@@ -30,8 +30,9 @@ const resolver = {
     }
   },
   Mutation: {
-    create: async (_, { input }, { models }) => {
+    create: async (_, { input }, { models, addEndpoint }) => {
       const x = await models.Function.create(input);
+      addEndpoint(input.serviceId);
       console.log('create', x);
       return input;
     },

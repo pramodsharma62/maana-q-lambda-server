@@ -1,11 +1,13 @@
 type Function {
   id: ID!
+  serviceId: ID!
   name: String!
   code: String!
 }
 
 input FunctionInput {
   id: ID!
+  serviceId: ID!
   name: String
   code: String
 }
