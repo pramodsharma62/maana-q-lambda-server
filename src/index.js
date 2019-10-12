@@ -1,14 +1,15 @@
 // --- External imports
 const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
 const glue = require('schemaglue');
 
 // --- Internal imports
 const { startDB, models } = require('./db');
+const { generateEndpoint } = require('./graphql/server');
 
 console.log('MONGODB_HOST', process.env.MONGODB_HOST);
 
 // --- Database setup
+
 const db = startDB({
   user: 'graphql',
   pwd: 'yoga123',
@@ -17,7 +18,9 @@ const db = startDB({
 });
 
 // --- HTTP server
+
 const port = 4000;
+const path = '/graphql';
 const app = express();
 
 // --- Schema setup
@@ -29,44 +32,17 @@ const options = {
 };
 const { schema: typeDefs, resolver: resolvers } = glue('src/graphql', options);
 
-const addEndpoint = name => {
-  // The GraphQL schema
-  const typeDefs2 = gql`
-    type Query {
-      "A simple type for getting started!"
-      hello: String
-    }
-  `;
-
-  // A map of functions which return data for the schema.
-  const resolvers2 = {
-    Query: {
-      hello: () => 'world'
-    }
-  };
-
-  const server2 = new ApolloServer({
-    typeDefs: typeDefs2,
-    resolvers: resolvers2,
-    context
-  });
-  server2.applyMiddleware({ path: `/${name}/graphql`, app });
-};
-
 // --- Call context: every resolver receives this
 const context = {
   models, // all of the persistence models
-  db, // the database itself
-  resolvers, // all of the other resolvers
-  addEndpoint
+  db // the database itself
 };
 
-// --- GraphQL Server
-const server = new ApolloServer({ typeDefs, resolvers, context });
-server.applyMiddleware({ path: '/graphql', app });
+// --- GraphQL Server for the service itself
+generateEndpoint({ typeDefs, resolvers, context, path, app });
 
 // ---
 
 app.listen({ port }, () => {
-  console.log(`🦄  maana-q-function-assist-logic @ http://localhost:${port}${server.graphqlPath}`);
+  console.log(`🦄  maana-q-lambda-server @ http://localhost:${port}${path}`);
 });

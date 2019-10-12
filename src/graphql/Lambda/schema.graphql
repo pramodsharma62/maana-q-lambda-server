@@ -1,0 +1,62 @@
+type Field {
+  name: String!
+  typeSig: String!
+}
+
+input FieldInput {
+  name: String!
+  typeSig: String!
+}
+
+type Kind {
+  name: String!
+  fields: [Field!]!
+}
+
+input KindInput {
+  name: ID!
+  fields: [FieldInput!]
+}
+
+type Host {
+  id: ID!
+}
+
+type Runtime {
+  id: ID!
+  host: String!
+  language: String!
+}
+
+type Lambda {
+  id: ID!
+  serviceId: ID!
+  runtime: Runtime!
+  code: String!
+  input: [Field!]!
+  typeSig: String!
+  kinds: [Kind!]!
+}
+
+input LambdaInput {
+  id: ID!
+  serviceId: ID
+  runtimeId: ID
+  code: String
+  input: [FieldInput!]
+  typeSig: String
+  kinds: [KindInput!]
+}
+
+type Query {
+  lambda(id: ID!): Lambda
+  listLambdas(serviceId: ID): [Lambda!]!
+  listServices: [String!]!
+  listRuntimes: [Runtime!]!
+}
+
+type Mutation {
+  createLambda(input: LambdaInput!): Lambda!
+  deleteLambda(id: ID!): Int!
+  deleteService(id: ID!): Int!
+}

@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 // --- Schema
 
-const Function = require('./Function');
+const Lambda = require('./Lambda');
 
 const models = {
-  Function
+  Lambda
 };
 
 // --- Mongoose client

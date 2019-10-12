@@ -1,7 +1,7 @@
 {
-  "name": "maana-q-function-assist-logic",
+  "name": "maana-q-lambda-server",
   "version": "1.0.0",
-  "description": "A service that does something",
+  "description": "Dynamically synthesize GraphQL endpoints that run JavaScript or Python code snippets in a sandbox as resolvers",
   "main": "src/index.js",
   "author": "Maana, Inc.",
   "private": true,

@@ -1,32 +1,45 @@
-mutation create {
-  foo1: createFoo(name: "foo1", bar: 2) {
-    name
-    bar
-  }
-  foo2: createFoo(name: "foo2", bar: 2) {
-    name
-    bar
+mutation createLambda {
+  createLambda(
+    input: {
+      id: "0"
+      serviceId: "common"
+      runtimeId: "Q+JS"
+      code: "const dob = new Date(input.person.dob); const dobYear = dob.getFullYear(); const now = new Date();const nowYear = now.getFullYear();output = nowYear - dobYear;"
+      input: [{ name: "person", typeSig: "Person!" }]
+      typeSig: "Int!"
+      kinds: [{ name: "Person", fields: [{ name: "name", typeSig: "String!" }, { name: "dob", typeSig: "String!" }] }]
+    }
+  ) {
+    id
+    serviceId
+    runtime {
+      id
+    }
+    code
+    input {
+      name
+      typeSig
+    }
+    typeSig
   }
 }
 
-mutation delete {
-  foo1: deleteFoo(name: "foo1") {
-    name
-    bar
-  }
-  foo2: deleteFoo(name: "foo2") {
-    name
-    bar
+query listRuntimes {
+  listRuntimes {
+    id
+    host
+    language
   }
 }
 
-query total {
-  totalBar
+mutation deleteLambda {
+  deleteLambda(id: "0")
 }
 
-query foo {
-  foo(name: "foo1") {
-    name
-    bar
-  }
+mutation deleteService {
+  deleteService(id: "common")
+}
+
+query listServices {
+  listServices
 }
