@@ -10,6 +10,12 @@ const kindFragment = {
   fields: [fieldFragment]
 };
 
+const runtimeFragment = {
+  id: String,
+  host: String,
+  language: String
+};
+
 const schema = new mongoose.Schema({
   id: {
     type: String,
@@ -21,11 +27,7 @@ const schema = new mongoose.Schema({
     require: true,
     index: true
   },
-  runtimeId: {
-    type: String,
-    required: true,
-    index: true
-  },
+  runtime: runtimeFragment,
   code: {
     type: String,
     required: true

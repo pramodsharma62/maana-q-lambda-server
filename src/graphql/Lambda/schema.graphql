@@ -49,7 +49,7 @@ input LambdaInput {
 }
 
 type Query {
-  lambda(id: ID!): Lambda
+  getLambda(id: ID!): Lambda
   listLambdas(serviceId: ID): [Lambda!]!
   listServices: [String!]!
   listRuntimes: [Runtime!]!

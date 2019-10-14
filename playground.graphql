@@ -1,26 +1,42 @@
+fragment lambdaFields on Lambda {
+  id
+  serviceId
+  runtime {
+    id
+  }
+  code
+  input {
+    name
+    typeSig
+  }
+  typeSig
+}
+
 mutation createLambda {
   createLambda(
     input: {
-      id: "0"
+      id: "common+age"
       serviceId: "common"
-      runtimeId: "Q+JS"
+      runtimeId: "Q+JavaScript"
       code: "const dob = new Date(input.person.dob); const dobYear = dob.getFullYear(); const now = new Date();const nowYear = now.getFullYear();output = nowYear - dobYear;"
       input: [{ name: "person", typeSig: "Person!" }]
       typeSig: "Int!"
       kinds: [{ name: "Person", fields: [{ name: "name", typeSig: "String!" }, { name: "dob", typeSig: "String!" }] }]
     }
   ) {
-    id
-    serviceId
-    runtime {
-      id
-    }
-    code
-    input {
-      name
-      typeSig
-    }
-    typeSig
+    ...lambdaFields
+  }
+}
+
+query getLambda {
+  getLambda(id: "common+age") {
+    ...lambdaFields
+  }
+}
+
+query listLambdas {
+  listLambdas(serviceId: "common") {
+    ...lambdaFields
   }
 }
 
@@ -33,7 +49,7 @@ query listRuntimes {
 }
 
 mutation deleteLambda {
-  deleteLambda(id: "0")
+  deleteLambda(id: "common+age")
 }
 
 mutation deleteService {

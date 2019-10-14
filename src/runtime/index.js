@@ -1,5 +1,7 @@
-const { ApolloServer } = require('apollo-server-express');
-// const { execJs } = require('../../sandbox');
+// --- External imports
+
+// --- Internal imports
+const { execJs } = require('./javaScript');
 
 // --- Constants
 
@@ -12,7 +14,7 @@ const Hosts = {
 };
 
 const Languages = {
-  JS: 'JavaScript',
+  JavaScript: 'JavaScript',
   Python: 'Python',
   Java: 'Java',
   CSharp: 'C#',
@@ -21,10 +23,12 @@ const Languages = {
   Go: 'Go'
 };
 
-const supportedRuntimes = [
+const mkRuntimeId = (host, language) => `${host}+${language}`;
+
+const SupportedRuntimes = [
   {
     host: Hosts.Q,
-    language: Languages.JS
+    language: Languages.JavaScript
   },
   {
     host: Hosts.Q,
@@ -36,7 +40,7 @@ const supportedRuntimes = [
   },
   {
     host: Hosts.AWSLambda,
-    language: Languages.JS
+    language: Languages.JavaScript
   },
   {
     host: Hosts.AWSLambda,
@@ -48,7 +52,7 @@ const supportedRuntimes = [
   },
   {
     host: Hosts.AzureCloudFunction,
-    language: Languages.JS
+    language: Languages.JavaScript
   },
   {
     host: Hosts.AzureCloudFunction,
@@ -72,7 +76,7 @@ const supportedRuntimes = [
   },
   {
     host: Hosts.GoogleCloudFunction,
-    language: Languages.JS
+    language: Languages.JavaScript
   },
   {
     host: Hosts.GoogleCloudFunction,
@@ -82,47 +86,22 @@ const supportedRuntimes = [
     host: Hosts.GoogleCloudFunction,
     language: Languages.Go
   }
-].map(x => ({ id: `${x.host}+${x.language}`, ...x }));
+].map(x => ({ id: mkRuntimeId(x.host, x.language), ...x }));
 
-// age: async (_, args, { models }) => {
-//   const fn = await models.Function.findOne({ id: '0' });
-//   return execJs(args, fn);
-// },
+// --- Functions
 
-// ---
-
-const generateEndpoint = ({ typeDefs, resolvers, context, path, app }) => {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context
-  });
-  server.applyMiddleware({ path, app });
+const generateResolver = ({ lambda }) => {
+  console.log('generateResolver', lambda);
+  if (lambda.runtimeId === mkRuntimeId(Hosts.Q, Languages.JavaScript)) {
+    return async (_, inputs) => execJs(inputs, lambda.code);
+  } else {
+    throw new Error(`Runtime not yet implemented: ${lambda.runtimeId}`);
+  }
 };
+
+// --- Exports
 
 module.exports = {
-  generateEndpoint,
-  supportedRuntimes
+  generateResolver,
+  SupportedRuntimes
 };
-
-// // The GraphQL schema
-// const typeDefs2 = gql`
-//   type Query {
-//     "A simple type for getting started!"
-//     hello: String
-//   }
-// `;
-
-// // A map of functions which return data for the schema.
-// const resolvers2 = {
-//   Query: {
-//     hello: () => 'world'
-//   }
-// };
-
-// const server2 = new ApolloServer({
-//   typeDefs: typeDefs2,
-//   resolvers: resolvers2,
-//   context
-// });
-// server2.applyMiddleware({ path: `/${name}/graphql`, app });

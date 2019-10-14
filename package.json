@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon src/index.js",
-    "serve": "NODE_ENV=PRODUCTION node src/index.js"
+    "serve": "NODE_ENV=PRODUCTION node --experimental-modules src/index.js"
   },
   "keywords": [
     "maana"
