@@ -52,8 +52,8 @@ input LambdaInput {
   runtimeId: ID
   code: String
   input: [FieldInput!]
-  outputKind: String!
-  outputModifiers: [Modifier!]!
+  outputKind: String
+  outputModifiers: [Modifier!]
   kinds: [KindInput!]
 }
 
