@@ -7,9 +7,11 @@ fragment lambdaFields on Lambda {
   code
   input {
     name
-    typeSig
+    kind
+    modifiers
   }
-  typeSig
+  outputKind
+  outputModifiers
 }
 
 mutation createLambda {
@@ -19,9 +21,18 @@ mutation createLambda {
       serviceId: "common"
       runtimeId: "Q+JavaScript"
       code: "const dob = new Date(input.person.dob); const dobYear = dob.getFullYear(); const now = new Date();const nowYear = now.getFullYear();output = nowYear - dobYear;"
-      input: [{ name: "person", typeSig: "Person!" }]
-      typeSig: "Int!"
-      kinds: [{ name: "Person", fields: [{ name: "name", typeSig: "String!" }, { name: "dob", typeSig: "String!" }] }]
+      input: [{ name: "person", kind: "Person", modifiers: [NONULL] }]
+      outputKind: "Int"
+      outputModifiers: [NONULL]
+      kinds: [
+        {
+          name: "Person"
+          fields: [
+            { name: "name", kind: "String", modifiers: [NONULL] }
+            { name: "dob", kind: "String", modifiers: [NONULL] }
+          ]
+        }
+      ]
     }
   ) {
     ...lambdaFields

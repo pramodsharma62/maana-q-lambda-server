@@ -1,11 +1,18 @@
+enum Modifier {
+  NONULL
+  LIST
+}
+
 type Field {
   name: String!
-  typeSig: String!
+  kind: String!
+  modifiers: [Modifier!]!
 }
 
 input FieldInput {
-  name: String!
-  typeSig: String!
+  name: String
+  kind: String
+  modifiers: [Modifier!]
 }
 
 type Kind {
@@ -34,7 +41,8 @@ type Lambda {
   runtime: Runtime!
   code: String!
   input: [Field!]!
-  typeSig: String!
+  outputKind: String!
+  outputModifiers: [Modifier!]!
   kinds: [Kind!]!
 }
 
@@ -44,7 +52,8 @@ input LambdaInput {
   runtimeId: ID
   code: String
   input: [FieldInput!]
-  typeSig: String
+  outputKind: String!
+  outputModifiers: [Modifier!]!
   kinds: [KindInput!]
 }
 

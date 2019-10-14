@@ -1,12 +1,14 @@
-// Internal
+// --- External imports
+
+// --- Internal imports
 const { SupportedRuntimes } = require('../../runtime');
-const { generateService } = require('../');
+const { generateService, removeService } = require('../');
 
 // --- Implementation
 
 const resolveRuntime = ({ id }) => {
   const matchingRuntimes = SupportedRuntimes.filter(x => x.id === id);
-  if (!matchingRuntimes || matchingRuntimes.length === 0) {
+  if (!matchingRuntimes || !matchingRuntimes.length) {
     throw new Error(`Invalid runtime ${id}`);
   }
   return matchingRuntimes[0];
@@ -14,6 +16,10 @@ const resolveRuntime = ({ id }) => {
 
 const regenerateService = async ({ id, app, models }) => {
   const lambdas = await models.Lambda.find({ serviceId: id });
+  if (!lambdas || !lambdas.length) {
+    removeService({ id, app });
+    return;
+  }
   await generateService({ lambdas, app });
 };
 
@@ -55,7 +61,7 @@ const deleteLambda = async ({ id, app, models }) => {
 const deleteService = async ({ id, app, models }) => {
   const x = await models.Lambda.deleteMany({ serviceId: id });
 
-  // @TODO: remove service endpoint
+  removeService({ id, app });
 
   return x.deletedCount;
 };
@@ -71,8 +77,8 @@ const resolver = {
   },
   Mutation: {
     createLambda: async (_, { input }, { app, models }) => createLambda({ input, app, models }),
-    deleteLambda: async (_, { id }, { models }) => deleteLambda({ id, models }),
-    deleteService: async (_, { id }, { models }) => deleteService({ id, models })
+    deleteLambda: async (_, { id }, { app, models }) => deleteLambda({ id, app, models }),
+    deleteService: async (_, { id }, { app, models }) => deleteService({ id, app, models })
   }
 };
 

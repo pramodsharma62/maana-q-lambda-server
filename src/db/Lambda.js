@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const fieldFragment = {
   name: String,
-  typeSig: String
+  kind: String,
+  modifiers: [String]
 };
 
 const kindFragment = {
@@ -33,7 +34,8 @@ const schema = new mongoose.Schema({
     required: true
   },
   input: [fieldFragment],
-  typeSig: String,
+  outputKind: String,
+  outputModifiers: [String],
   kinds: [kindFragment]
 });
 

@@ -30,6 +30,8 @@ const generateTypeDefs = async ({ serviceId, models }) => {
 // ---
 
 const generateService = async ({ lambdas, app }) => {
+  if (!lambdas || !lambdas.serviceLambdas) return;
+
   // // Call context: every resolver receives this
   // const context = {
   //   models, // all of the persistence models
@@ -60,6 +62,11 @@ const generateAllServices = async ({ app, models }) => {
   return Promise.all(Object.values(serviceLambdas).map(async lambdas => generateService({ lambdas, app })));
 };
 
+const removeService = ({ id, app }) => {
+  console.log('removeService', id);
+  console.log(app._router.stack);
+};
+
 // ---
 
 const generateEndpoint = ({ typeDefs, resolvers, context, path, app }) => {
@@ -77,5 +84,6 @@ module.exports = {
   generateEndpoint,
   generateTypeDefs,
   generateService,
-  generateAllServices
+  generateAllServices,
+  removeService
 };
