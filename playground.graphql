@@ -1,3 +1,9 @@
+fragment fieldFields on Field {
+  name
+  kind
+  modifiers
+}
+
 fragment lambdaFields on Lambda {
   id
   name
@@ -7,12 +13,16 @@ fragment lambdaFields on Lambda {
   }
   code
   input {
-    name
-    kind
-    modifiers
+    ...fieldFields
   }
   outputKind
   outputModifiers
+  kinds {
+    name
+    fields {
+      ...fieldFields
+    }
+  }
 }
 
 mutation createLambda {
@@ -31,7 +41,33 @@ mutation createLambda {
           name: "Person"
           fields: [
             { name: "name", kind: "String", modifiers: [NONULL] }
-            { name: "dob", kind: "String", modifiers: [NONULL] }
+            { name: "dob", kind: "Date", modifiers: [NONULL] }
+          ]
+        }
+      ]
+    }
+  ) {
+    ...lambdaFields
+  }
+}
+
+mutation createLambda2 {
+  createLambda(
+    input: {
+      id: "my_workspace+projectDob"
+      name: "projectDob"
+      serviceId: "my_workspace"
+      runtimeId: "Q+JavaScript"
+      code: "output = input.person.dob;"
+      input: [{ name: "person", kind: "Person", modifiers: [NONULL] }]
+      outputKind: "Date"
+      outputModifiers: [NONULL]
+      kinds: [
+        {
+          name: "Person"
+          fields: [
+            { name: "name", kind: "String", modifiers: [NONULL] }
+            { name: "dob", kind: "Date", modifiers: [NONULL] }
           ]
         }
       ]

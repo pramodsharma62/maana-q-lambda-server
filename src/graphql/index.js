@@ -27,6 +27,11 @@ const ScalarTypes = {
 
 // --- Functions
 
+const mkPath = ({ id }) => `/${id}/graphql`;
+const escapePath = ({ path }) => path.replace(/\//g, '\\/');
+
+// ---
+
 const generateType = ({ name, modifiers, isInput, lambda }) => {
   let baseType = ScalarTypes[name.toLowerCase()];
   if (!baseType) {
@@ -75,6 +80,8 @@ const generateType = ({ name, modifiers, isInput, lambda }) => {
   return modifiedType;
 };
 
+// ---
+
 const generateSchema = ({ lambdas }) => {
   const queries = {};
 
@@ -103,10 +110,12 @@ const generateService = async ({ lambdas, app }) => {
   if (!lambdas || !lambdas.length) return;
 
   const serviceId = lambdas[0].serviceId;
+
   const schema = generateSchema({ lambdas });
   const context = {}; // every resolver receives this
 
-  generateEndpoint({ schema, context, path: `/${serviceId}/graphql`, app });
+  removeService({ id: serviceId, app });
+  generateEndpoint({ schema, context, path: mkPath({ id: serviceId }), app });
 };
 
 // ---
@@ -127,9 +136,30 @@ const generateAllServices = async ({ app, models }) => {
   return Promise.all(Object.values(serviceLambdas).map(async lambdas => generateService({ lambdas, app })));
 };
 
+// ---
+
 const removeService = ({ id, app }) => {
-  console.log('removeService', id);
-  // console.log(app._router.stack);
+  const path = mkPath({ id });
+  const escapedPath = escapePath({ path });
+
+  const stack = app._router.stack;
+  let targetLayerIndex = -1;
+  stack.forEach((layer, index) => {
+    if (layer.name === 'router') {
+      const substack = layer.handle.stack;
+      if (
+        substack.some(x => {
+          const regexp = x.regexp.toString();
+          const match = regexp.includes(escapedPath);
+          return match;
+        })
+      ) {
+        targetLayerIndex = index;
+      }
+    }
+  });
+  if (targetLayerIndex === -1) return;
+  stack.splice(targetLayerIndex, 1);
 };
 
 // ---
