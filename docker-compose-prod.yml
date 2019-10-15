@@ -12,8 +12,8 @@ services:
       MONGODB_DATABASE: graphqlYoga
     volumes:
       - './containers/mongo:/data/db'
-  helpers:
-    image: 'maana-q-lambda-server'
+  maana-q-lambda-server:
+    image: 'services.azurecr.io/maana-q-lambda-server:v1'
     ports:
       - '4000:4000'
     networks:
