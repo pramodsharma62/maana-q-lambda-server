@@ -32,7 +32,7 @@ const escapePath = ({ path }) => path.replace(/\//g, '\\/');
 
 // ---
 
-const generateGraphQLType = ({ name, modifiers, isInput, lambda }) => {
+const generateBaseGraphQLType = ({ name, isInput, lambda }) => {
   let baseType = ScalarTypes[name.toLowerCase()];
   if (!baseType) {
     const matchingKinds = lambda.kinds.filter(kind => kind.name === name);
@@ -53,7 +53,10 @@ const generateGraphQLType = ({ name, modifiers, isInput, lambda }) => {
     };
     baseType = isInput ? new graphql.GraphQLInputObjectType(config) : new graphql.GraphQLObjectType(config);
   }
+  return baseType;
+};
 
+const generateModifiedGraphQLType = ({ baseType, modifiers }) => {
   // Deal with Q's odd type modifiers
   // - list is either [Foo] or [Foo!]!
   let isRequired = false;
@@ -80,20 +83,35 @@ const generateGraphQLType = ({ name, modifiers, isInput, lambda }) => {
   return modifiedType;
 };
 
+const generateGraphQLType = ({ name, modifiers, isInput, lambda }) => {
+  const baseType = generateBaseGraphQLType({ name, isInput, lambda });
+  return generateModifiedGraphQLType({ baseType, modifiers });
+};
+
 // ---
 
 const generateSchema = ({ lambdas }) => {
   const queries = {};
 
+  const typeCache = {};
+  const getGraphQLType = ({ name, modifiers, isInput, lambda }) => {
+    let baseType = typeCache[name];
+    if (!baseType) {
+      baseType = generateBaseGraphQLType({ name, isInput, lambda });
+      typeCache[name] = baseType;
+    }
+    return generateModifiedGraphQLType({ baseType, modifiers });
+  };
+
   lambdas.forEach(lambda => {
     const args = {};
     lambda.input.forEach(arg => {
       args[arg.name] = {
-        type: generateGraphQLType({ name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda })
+        type: getGraphQLType({ name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda })
       };
     });
     queries[lambda.name] = {
-      type: generateGraphQLType({ name: lambda.outputKind, modifiers: lambda.outputModifiers, isInput: false, lambda }),
+      type: getGraphQLType({ name: lambda.outputKind, modifiers: lambda.outputModifiers, isInput: false, lambda }),
       args,
       resolve: generateResolver({ lambda })
     };
