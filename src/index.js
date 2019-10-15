@@ -1,10 +1,11 @@
 // --- External imports
+const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
 const glue = require('schemaglue');
 
 // --- Internal imports
 const { startDB, models } = require('./db');
-const { generateEndpoint, generateAllServices } = require('./graphql');
+const { generateAllServices } = require('./graphql');
 
 // ---
 
@@ -44,8 +45,12 @@ const main = async () => {
     models
   };
 
-  // Base Lambda (admin) service
-  generateEndpoint({ typeDefs, resolvers, context, path, app });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context
+  });
+  server.applyMiddleware({ path, app });
 
   // All lambda services
   await generateAllServices({ app, models });

@@ -1,5 +1,6 @@
 fragment lambdaFields on Lambda {
   id
+  name
   serviceId
   runtime {
     id
@@ -18,6 +19,7 @@ mutation createLambda {
   createLambda(
     input: {
       id: "common+age"
+      name: "age"
       serviceId: "common"
       runtimeId: "Q+JavaScript"
       code: "const dob = new Date(input.person.dob); const dobYear = dob.getFullYear(); const now = new Date();const nowYear = now.getFullYear();output = nowYear - dobYear;"

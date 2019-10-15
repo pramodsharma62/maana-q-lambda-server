@@ -1,46 +1,71 @@
 // --- External imports
 const { ApolloServer } = require('apollo-server-express');
+const graphql = require('graphql'); // CommonJS
 
 // --- Internal imports
+const { generateResolver } = require('../runtime');
 
 // --- Constants
 
 // --- Functions
 
-// https://graphql.org/graphql-js/constructing-types/
-
-const generateTypeDefs = async ({ serviceId, models }) => {
-  const lambdas = await models.Lambda.find({ serviceId });
-  console.log('generateTypeDefs: ', lambdas);
-
-  const kinds = {};
-  const resolvers = {};
-  const query = {};
-  lambdas.forEach(lambda => {
-    const resolver = generateResolver({ lambda });
-    lambda.kinds.forEach(kind => {
-      kinds[kind.name] = kind;
-    });
-  });
-  console.log('kinds', kinds);
-
+const generateSchema = ({ lambdas }) => {
   const types = {};
+  const inputs = {};
+  const queries = {};
+
+  // Define the User type
+  var userType = new graphql.GraphQLObjectType({
+    name: 'User',
+    fields: {
+      id: { type: graphql.GraphQLString },
+      name: { type: graphql.GraphQLString }
+    }
+  });
+
+  lambdas.forEach(lambda => {
+    queries[lambda.name] = {
+      type: userType,
+      args: {
+        id: { type: graphql.GraphQLString }
+      },
+      resolve: generateResolver({ lambda })
+    };
+
+    // user: {
+    //   type: userType,
+    //   // `args` describes the arguments that the `user` query accepts
+    //   args: {
+    //     id: { type: graphql.GraphQLString }
+    //   },
+    //   resolve: function(_, { id }) {
+    //     return fakeDatabase[id];
+    //   }
+  });
+
+  // Define the Query type
+  var queryType = new graphql.GraphQLObjectType({
+    name: 'Query',
+    fields: queries
+  });
+  const schema = new graphql.GraphQLSchema({ query: queryType });
+  return schema;
 };
 
-// ---
-
 const generateService = async ({ lambdas, app }) => {
-  if (!lambdas || !lambdas.serviceLambdas) return;
-
-  // // Call context: every resolver receives this
-  // const context = {
-  //   models, // all of the persistence models
-  //   db // the database itself
-  // };
-  // const typeDefs = generateTypeDefs({ serviceId: lambda.serviceId, models });
-  // const resolvers = lambdas.map(lambda => generateResolver({ lambda }));
-  // generateEndpoint({ typeDefs, resolvers, path: `${lambda.serviceId}/graphql`, app });
   console.log('generateServices: ', lambdas);
+
+  if (!lambdas || !lambdas.length) return;
+
+  const serviceId = lambdas[0].serviceId;
+  const schema = generateSchema({ lambdas });
+  console.log('schema', schema);
+  // Call context: every resolver receives this
+  const context = {
+    //   models, // all of the persistence models
+    //   db // the database itself
+  };
+  generateEndpoint({ schema, context, path: `/${serviceId}/graphql`, app });
 };
 
 // ---
@@ -64,15 +89,14 @@ const generateAllServices = async ({ app, models }) => {
 
 const removeService = ({ id, app }) => {
   console.log('removeService', id);
-  console.log(app._router.stack);
+  // console.log(app._router.stack);
 };
 
 // ---
 
-const generateEndpoint = ({ typeDefs, resolvers, context, path, app }) => {
+const generateEndpoint = ({ schema, context, path, app }) => {
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema,
     context
   });
   server.applyMiddleware({ path, app });
@@ -82,7 +106,6 @@ const generateEndpoint = ({ typeDefs, resolvers, context, path, app }) => {
 
 module.exports = {
   generateEndpoint,
-  generateTypeDefs,
   generateService,
   generateAllServices,
   removeService

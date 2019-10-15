@@ -37,6 +37,7 @@ type Runtime {
 
 type Lambda {
   id: ID!
+  name: String!
   serviceId: ID!
   runtime: Runtime!
   code: String!
@@ -48,6 +49,7 @@ type Lambda {
 
 input LambdaInput {
   id: ID!
+  name: String
   serviceId: ID
   runtimeId: ID
   code: String

@@ -23,6 +23,11 @@ const schema = new mongoose.Schema({
     require: true,
     index: true
   },
+  name: {
+    type: String,
+    require: true,
+    index: true
+  },
   serviceId: {
     type: String,
     require: true,
