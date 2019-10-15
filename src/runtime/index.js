@@ -92,7 +92,7 @@ const SupportedRuntimes = [
 
 const generateResolver = ({ lambda }) => {
   if (lambda.runtime.id === mkRuntimeId(Hosts.Q, Languages.JavaScript)) {
-    return async (_, inputs) => execJs(inputs, lambda.code);
+    return async (_, input) => execJs({ input, lambda });
   } else {
     throw new Error(`Runtime not yet implemented: ${lambda.runtimeId}`);
   }

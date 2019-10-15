@@ -32,7 +32,7 @@ const escapePath = ({ path }) => path.replace(/\//g, '\\/');
 
 // ---
 
-const generateType = ({ name, modifiers, isInput, lambda }) => {
+const generateGraphQLType = ({ name, modifiers, isInput, lambda }) => {
   let baseType = ScalarTypes[name.toLowerCase()];
   if (!baseType) {
     const matchingKinds = lambda.kinds.filter(kind => kind.name === name);
@@ -44,14 +44,14 @@ const generateType = ({ name, modifiers, isInput, lambda }) => {
     const fields = {};
     kind.fields.forEach(field => {
       fields[field.name] = {
-        type: generateType({ name: field.kind, modifiers: field.modifiers, isInput: false, lambda })
+        type: generateGraphQLType({ name: field.kind, modifiers: field.modifiers, isInput: false, lambda })
       };
     });
     const config = {
       name,
       fields
     };
-    baseType = isInput ? new graphql.GraphQLInputObjectType(config) : graphql.GraphQLObjectType(config);
+    baseType = isInput ? new graphql.GraphQLInputObjectType(config) : new graphql.GraphQLObjectType(config);
   }
 
   // Deal with Q's odd type modifiers
@@ -88,10 +88,12 @@ const generateSchema = ({ lambdas }) => {
   lambdas.forEach(lambda => {
     const args = {};
     lambda.input.forEach(arg => {
-      args[arg.name] = { type: generateType({ name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda }) };
+      args[arg.name] = {
+        type: generateGraphQLType({ name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda })
+      };
     });
     queries[lambda.name] = {
-      type: generateType({ name: lambda.outputKind, modifiers: lambda.outputModifiers, isInput: false, lambda }),
+      type: generateGraphQLType({ name: lambda.outputKind, modifiers: lambda.outputModifiers, isInput: false, lambda }),
       args,
       resolve: generateResolver({ lambda })
     };
@@ -105,6 +107,8 @@ const generateSchema = ({ lambdas }) => {
   const schema = new graphql.GraphQLSchema({ query: queryType });
   return schema;
 };
+
+// ---
 
 const generateService = async ({ lambdas, app }) => {
   if (!lambdas || !lambdas.length) return;
@@ -175,8 +179,10 @@ const generateEndpoint = ({ schema, context, path, app }) => {
 // --- Exports
 
 module.exports = {
-  generateEndpoint,
-  generateService,
   generateAllServices,
+  generateEndpoint,
+  generateSchema,
+  generateGraphQLType,
+  generateService,
   removeService
 };
