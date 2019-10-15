@@ -91,7 +91,6 @@ const SupportedRuntimes = [
 // --- Functions
 
 const generateResolver = ({ lambda }) => {
-  console.log('generateResolver', lambda);
   if (lambda.runtime.id === mkRuntimeId(Hosts.Q, Languages.JavaScript)) {
     return async (_, inputs) => execJs(inputs, lambda.code);
   } else {
