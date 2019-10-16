@@ -1,7 +1,8 @@
 # Docker
-docker-compose -f docker-compose-prod.yml up --no-start 
+docker build -t maana-q-lambda-server .
 docker tag maana-q-lambda-server services.azurecr.io/maana-q-lambda-server:v1
 docker push services.azurecr.io/maana-q-lambda-server
+docker-compose -f docker-compose-prod.yml up --no-start 
 
 # Cleanup previous kubectl
 kubectl delete deployment maana-q-lambda-server
