@@ -13,7 +13,6 @@ const execJs = ({ input, lambda }) => {
     const sandbox = { input, output: null };
     vm.createContext(sandbox);
     vm.runInContext(lambda.code, sandbox);
-    // console.log(`sandbox:${lambda.name}`, sandbox);
     return sandbox.output;
   } catch (ex) {
     console.log('execJs', ex);

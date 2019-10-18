@@ -33,7 +33,7 @@ const createLambda = async ({ input, app, models }) => {
   // patch to include runtime
   const runtime = resolveRuntime({ id: input.runtimeId });
 
-  const lambda = await models.Lambda.create({ ...input, runtime });
+  const lambda = await models.Lambda.create({ graphQLOperationType: 'QUERY', ...input, runtime });
 
   // (re)generate the full service
   await regenerateService({ id: lambda.serviceId, app, models });

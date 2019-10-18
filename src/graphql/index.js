@@ -13,6 +13,11 @@ const Modifiers = {
   LIST: 'LIST'
 };
 
+const GraphQLOperationTypes = {
+  MUTATION: 'QUERY',
+  MUTATION: 'MUTATION'
+};
+
 const ScalarTypes = {
   boolean: graphql.GraphQLBoolean,
   float: graphql.GraphQLFloat,
@@ -102,8 +107,17 @@ const getGraphQLType = ({ cache, name, modifiers, isInput, lambda }) => {
 
 // ---
 
+const infoQuery = () => ({
+  type: graphql.GraphQLString,
+  args: {},
+  resolve: async () => 'Maana Q Lambda Server v1.0'
+});
+
+// ---
+
 const generateSchema = ({ lambdas }) => {
-  const queries = {};
+  const queries = { info: infoQuery() };
+  const mutations = {};
 
   const cache = {};
 
@@ -114,7 +128,7 @@ const generateSchema = ({ lambdas }) => {
         type: getGraphQLType({ cache, name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda })
       };
     });
-    queries[lambda.name] = {
+    const op = {
       type: getGraphQLType({
         cache,
         name: lambda.outputKind,
@@ -125,14 +139,26 @@ const generateSchema = ({ lambdas }) => {
       args,
       resolve: generateResolver({ lambda })
     };
+    if (lambda.graphQLOperationType === GraphQLOperationTypes.MUTATION) {
+      mutations[lambda.name] = op;
+    } else {
+      queries[lambda.name] = op;
+    }
   });
 
-  // Define the Query type
-  var queryType = new graphql.GraphQLObjectType({
+  const query = new graphql.GraphQLObjectType({
     name: 'Query',
     fields: queries
   });
-  const schema = new graphql.GraphQLSchema({ query: queryType });
+  const schemaInput = { query };
+  if (Object.keys(mutations).length) {
+    const mutation = new graphql.GraphQLObjectType({
+      name: 'Mutation',
+      fields: mutations
+    });
+    schemaInput.mutation = mutation;
+  }
+  const schema = new graphql.GraphQLSchema(schemaInput);
   return schema;
 };
 

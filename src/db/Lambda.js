@@ -41,7 +41,8 @@ const schema = new mongoose.Schema({
   input: [fieldFragment],
   outputKind: String,
   outputModifiers: [String],
-  kinds: [kindFragment]
+  kinds: [kindFragment],
+  graphQLOperationType: String
 });
 
 module.exports = mongoose.model('Lambda', schema);

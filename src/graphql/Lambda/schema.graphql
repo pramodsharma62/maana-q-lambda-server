@@ -3,6 +3,11 @@ enum Modifier {
   LIST
 }
 
+enum GraphQLOperationType {
+  QUERY
+  MUTATION
+}
+
 type Field {
   name: String!
   kind: String!
@@ -45,6 +50,7 @@ type Lambda {
   outputKind: String!
   outputModifiers: [Modifier!]!
   kinds: [Kind!]!
+  graphQLOperationType: GraphQLOperationType
 }
 
 input LambdaInput {
@@ -57,6 +63,7 @@ input LambdaInput {
   outputKind: String
   outputModifiers: [Modifier!]
   kinds: [KindInput!]
+  graphQLOperationType: GraphQLOperationType
 }
 
 type Query {
