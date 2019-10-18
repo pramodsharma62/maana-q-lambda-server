@@ -32,7 +32,7 @@ const escapePath = ({ path }) => path.replace(/\//g, '\\/');
 
 // ---
 
-const generateBaseGraphQLType = ({ name, isInput, lambda }) => {
+const generateBaseGraphQLType = ({ cache, name, isInput, lambda }) => {
   let baseType = ScalarTypes[name.toLowerCase()];
   if (!baseType) {
     const matchingKinds = lambda.kinds.filter(kind => kind.name === name);
@@ -44,7 +44,7 @@ const generateBaseGraphQLType = ({ name, isInput, lambda }) => {
     const fields = {};
     kind.fields.forEach(field => {
       fields[field.name] = {
-        type: generateGraphQLType({ name: field.kind, modifiers: field.modifiers, isInput: false, lambda })
+        type: getGraphQLType({ cache, name: field.kind, modifiers: field.modifiers, isInput: false, lambda })
       };
     });
     const config = {
@@ -83,8 +83,19 @@ const generateModifiedGraphQLType = ({ baseType, modifiers }) => {
   return modifiedType;
 };
 
-const generateGraphQLType = ({ name, modifiers, isInput, lambda }) => {
-  const baseType = generateBaseGraphQLType({ name, isInput, lambda });
+const generateGraphQLType = ({ cache, name, modifiers, isInput, lambda }) => {
+  const baseType = generateBaseGraphQLType({ cache, name, isInput, lambda });
+  return generateModifiedGraphQLType({ baseType, modifiers });
+};
+
+// ---
+
+const getGraphQLType = ({ cache, name, modifiers, isInput, lambda }) => {
+  let baseType = cache[name];
+  if (!baseType) {
+    baseType = generateBaseGraphQLType({ cache, name, isInput, lambda });
+    cache[name] = baseType;
+  }
   return generateModifiedGraphQLType({ baseType, modifiers });
 };
 
@@ -93,25 +104,23 @@ const generateGraphQLType = ({ name, modifiers, isInput, lambda }) => {
 const generateSchema = ({ lambdas }) => {
   const queries = {};
 
-  const typeCache = {};
-  const getGraphQLType = ({ name, modifiers, isInput, lambda }) => {
-    let baseType = typeCache[name];
-    if (!baseType) {
-      baseType = generateBaseGraphQLType({ name, isInput, lambda });
-      typeCache[name] = baseType;
-    }
-    return generateModifiedGraphQLType({ baseType, modifiers });
-  };
+  const cache = {};
 
   lambdas.forEach(lambda => {
     const args = {};
     lambda.input.forEach(arg => {
       args[arg.name] = {
-        type: getGraphQLType({ name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda })
+        type: getGraphQLType({ cache, name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda })
       };
     });
     queries[lambda.name] = {
-      type: getGraphQLType({ name: lambda.outputKind, modifiers: lambda.outputModifiers, isInput: false, lambda }),
+      type: getGraphQLType({
+        cache,
+        name: lambda.outputKind,
+        modifiers: lambda.outputModifiers,
+        isInput: false,
+        lambda
+      }),
       args,
       resolve: generateResolver({ lambda })
     };
@@ -133,11 +142,14 @@ const generateService = async ({ lambdas, app }) => {
 
   const serviceId = lambdas[0].serviceId;
 
-  const schema = generateSchema({ lambdas });
-  const context = {}; // every resolver receives this
-
-  removeService({ id: serviceId, app });
-  generateEndpoint({ schema, context, path: mkPath({ id: serviceId }), app });
+  try {
+    const schema = generateSchema({ lambdas });
+    const context = {}; // every resolver receives this
+    removeService({ id: serviceId, app });
+    generateEndpoint({ schema, context, path: mkPath({ id: serviceId }), app });
+  } catch (ex) {
+    console.log('generateServices', ex);
+  }
 };
 
 // ---
