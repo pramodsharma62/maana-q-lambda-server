@@ -143,15 +143,10 @@ const generateService = async ({ lambdas, app }) => {
 
   const serviceId = lambdas[0].serviceId;
 
-  try {
-    const schema = generateSchema({ lambdas });
-    console.log(serviceId, JSON.stringify(schema, null, 2));
-    const context = {}; // every resolver receives this
-    removeService({ id: serviceId, app });
-    generateEndpoint({ schema, context, path: mkPath({ id: serviceId }), app });
-  } catch (ex) {
-    console.log('generateService', ex);
-  }
+  const schema = generateSchema({ lambdas });
+  const context = {}; // every resolver receives this
+  removeService({ id: serviceId, app });
+  generateEndpoint({ schema, context, path: mkPath({ id: serviceId }), app });
 };
 
 // ---
@@ -169,7 +164,17 @@ const generateAllServices = async ({ app, models }) => {
     lambdas.push(lambda);
   });
 
-  return Promise.all(Object.values(serviceLambdas).map(async lambdas => generateService({ lambdas, app })));
+  return Promise.all(
+    Object.values(serviceLambdas).map(async lambdas => {
+      try {
+        await generateService({ lambdas, app });
+      } catch (ex) {
+        console.log('generateService failed', ex, lambdas);
+        console.log('cleaning up service...');
+        await models.Lambda.deleteMany({ serviceId: lambdas[0].serviceId });
+      }
+    })
+  );
 };
 
 // ---
