@@ -1,9 +1,9 @@
-version: '3'
+version: "3"
 services:
   db:
-    image: 'bitnami/mongodb:latest'
+    image: "bitnami/mongodb:latest"
     ports:
-      - '27017:27017'
+      - "27017:27017"
     networks:
       - net
     environment:
@@ -11,11 +11,11 @@ services:
       MONGODB_PASSWORD: yoga123
       MONGODB_DATABASE: graphqlYoga
     volumes:
-      - './containers/mongo:/data/db'
+      - "./containers/mongo:/data/db"
   maana-q-lambda-server:
-    image: 'services.azurecr.io/maana-q-lambda-server:v1'
+    image: "services.azurecr.io/maana-q-lambda-server:v1.1"
     ports:
-      - '4000:4000'
+      - "4000:4000"
     networks:
       - net
     environment:

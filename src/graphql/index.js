@@ -91,10 +91,11 @@ const generateGraphQLType = ({ cache, name, modifiers, isInput, lambda }) => {
 // ---
 
 const getGraphQLType = ({ cache, name, modifiers, isInput, lambda }) => {
-  let baseType = cache[name];
+  const key = `${name}:${isInput.toString()}`;
+  let baseType = cache[key];
   if (!baseType) {
     baseType = generateBaseGraphQLType({ cache, name, isInput, lambda });
-    cache[name] = baseType;
+    cache[key] = baseType;
   }
   return generateModifiedGraphQLType({ baseType, modifiers });
 };
@@ -144,11 +145,12 @@ const generateService = async ({ lambdas, app }) => {
 
   try {
     const schema = generateSchema({ lambdas });
+    console.log(serviceId, JSON.stringify(schema, null, 2));
     const context = {}; // every resolver receives this
     removeService({ id: serviceId, app });
     generateEndpoint({ schema, context, path: mkPath({ id: serviceId }), app });
   } catch (ex) {
-    console.log('generateServices', ex);
+    console.log('generateService', ex);
   }
 };
 
