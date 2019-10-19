@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon src/index.js",
-    "serve": "NODE_ENV=PRODUCTION node --experimental-modules src/index.js"
+    "serve": "NODE_ENV=PRODUCTION node src/index.js"
   },
   "keywords": [
     "maana"
@@ -35,7 +35,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "nodemon": "^1.19.3",
+    "nodemon": "^1.19.4",
     "prettier": "^1.18.2"
   }
 }

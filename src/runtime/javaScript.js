@@ -19,9 +19,7 @@ const execJs = async ({ input, lambda }) => {
       },
       wrapper: 'none'
     });
-    const result = vm.run(lambda.code, __filename);
-    const output = await Promise.resolve(result);
-    return output;
+    return vm.run(lambda.code, __filename);
   } catch (ex) {
     console.log('execJs', ex);
     throw ex;
