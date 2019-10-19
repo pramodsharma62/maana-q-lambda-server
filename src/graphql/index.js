@@ -6,6 +6,7 @@ const { GraphQLJSON } = require('graphql-type-json');
 
 // --- Internal imports
 const { generateResolver } = require('../runtime');
+const { version } = require('../../package');
 
 // --- Constants
 
@@ -112,7 +113,7 @@ const getGraphQLType = ({ cache, name, modifiers, isInput, lambda }) => {
 const infoQuery = () => ({
   type: graphql.GraphQLString,
   args: {},
-  resolve: async () => 'Maana Q Lambda Server v1.0'
+  resolve: async () => `Maana Q Lambda Server v${version}`
 });
 
 // ---
