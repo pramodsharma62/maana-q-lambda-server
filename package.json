@@ -17,9 +17,12 @@
     "express": "^4.17.1",
     "graphql": "^14.5.8",
     "graphql-iso-date": "^3.6.1",
+    "graphql-type-json": "^0.3.0",
     "lru-cache": "^5.1.1",
     "mongoose": "^5.7.5",
-    "schemaglue": "^4.0.4"
+    "request": "^2.88.0",
+    "schemaglue": "^4.0.4",
+    "vm2": "^3.8.4"
   },
   "devDependencies": {
     "eslint": "^6.5.1",

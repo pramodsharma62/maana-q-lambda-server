@@ -2,6 +2,7 @@
 const { ApolloServer } = require('apollo-server-express');
 const graphql = require('graphql'); // CommonJS
 const { GraphQLDate, GraphQLTime, GraphQLDateTime } = require('graphql-iso-date');
+const { GraphQLJSON } = require('graphql-type-json');
 
 // --- Internal imports
 const { generateResolver } = require('../runtime');
@@ -14,7 +15,7 @@ const Modifiers = {
 };
 
 const GraphQLOperationTypes = {
-  MUTATION: 'QUERY',
+  QUERY: 'QUERY',
   MUTATION: 'MUTATION'
 };
 
@@ -27,7 +28,8 @@ const ScalarTypes = {
   // ---
   date: GraphQLDate,
   datetime: GraphQLDateTime,
-  time: GraphQLTime
+  time: GraphQLTime,
+  json: GraphQLJSON
 };
 
 // --- Functions

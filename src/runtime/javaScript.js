@@ -1,5 +1,5 @@
 // --- External imports
-const vm = require('vm'); // https://nodejs.org/api/vm.html
+const { NodeVM } = require('vm2');
 
 // --- Internal imports
 
@@ -7,13 +7,21 @@ const vm = require('vm'); // https://nodejs.org/api/vm.html
 
 // --- Functions
 
-const execJs = ({ input, lambda }) => {
+const execJs = async ({ input, lambda }) => {
   try {
-    // console.log('execJs', input, lambda);
     const sandbox = { input, output: null };
-    vm.createContext(sandbox);
-    vm.runInContext(lambda.code, sandbox);
-    return sandbox.output;
+    const vm = new NodeVM({
+      sandbox,
+      console: 'inherit',
+      require: {
+        external: true,
+        builtin: ['*']
+      },
+      wrapper: 'none'
+    });
+    const result = vm.run(lambda.code, __filename);
+    const output = await Promise.resolve(result);
+    return output;
   } catch (ex) {
     console.log('execJs', ex);
     throw ex;
