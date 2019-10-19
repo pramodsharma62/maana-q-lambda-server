@@ -6,6 +6,7 @@ const glue = require('schemaglue');
 // --- Internal imports
 const { startDB, models } = require('./db');
 const { generateAllServices } = require('./graphql');
+const { version } = require('../package');
 
 // ---
 
@@ -58,7 +59,7 @@ const main = async () => {
   // --- HTTP listen
 
   app.listen({ port }, () => {
-    console.log(`🦄  maana-q-lambda-server @ http://localhost:${port}${path}`);
+    console.log(`\n\n\n🦄  maana-q-lambda-server v${version} @ http://localhost:${port}${path}\n\n`);
   });
 };
 
