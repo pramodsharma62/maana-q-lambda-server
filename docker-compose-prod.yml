@@ -13,7 +13,7 @@ services:
     volumes:
       - "./containers/mongo:/data/maana-q-lambda-server-db"
   maana-q-lambda-server:
-    image: "services.azurecr.io/maana-q-lambda-server:v1.2.1"
+    image: "services.azurecr.io/maana-q-lambda-server:v1.2.2"
     ports:
       - "4000:4000"
     networks:

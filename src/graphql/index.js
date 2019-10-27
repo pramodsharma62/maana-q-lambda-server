@@ -49,15 +49,18 @@ const generateBaseGraphQLType = ({ cache, name, isInput, lambda }) => {
     }
     const kind = matchingKinds[0];
 
-    const fields = {};
-    kind.fields.forEach(field => {
-      fields[field.name] = {
-        type: getGraphQLType({ cache, name: field.kind, modifiers: field.modifiers, isInput: false, lambda })
-      };
-    });
+    const thunk = () => {
+      const fields = {};
+      kind.fields.forEach(field => {
+        fields[field.name] = {
+          type: getGraphQLType({ cache, name: field.kind, modifiers: field.modifiers, isInput, lambda })
+        };
+      });
+      return fields;
+    };
     const config = {
       name,
-      fields
+      fields: thunk
     };
     baseType = isInput ? new graphql.GraphQLInputObjectType(config) : new graphql.GraphQLObjectType(config);
   }
