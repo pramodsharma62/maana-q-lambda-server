@@ -2,6 +2,7 @@
 const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
 const glue = require('schemaglue');
+const bodyParser = require('body-parser');
 
 // --- Internal imports
 const { startDB, models } = require('./db');
@@ -27,6 +28,8 @@ const main = async () => {
   const port = 4000;
   const path = '/graphql';
   const app = express();
+
+  app.use(bodyParser.json({ limit: '500mb' }));
 
   // --- Schema setup
 
