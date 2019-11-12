@@ -9,6 +9,11 @@ const { startDB, models } = require('./db');
 const { generateAllServices } = require('./graphql');
 const { version } = require('../package');
 
+// --- Maintenance mode
+const { startMaintenanceServer } = require('./maintenance');
+// -- Backup and restore
+const { backup, restore } = require('./backup');
+
 // ---
 
 const main = async () => {
@@ -30,6 +35,29 @@ const main = async () => {
   const app = express();
 
   app.use(bodyParser.json({ limit: '500mb' }));
+  const maintenancePath = '/maintenance/graphql';
+
+  /**
+   * After restoring from backup, all services must be regenerated
+   */
+  const restoreAndRegenerateAllServices = async backupPath => {
+    const restoreResult = await restore(backupPath);
+    console.log('Regenerating all services');
+    await generateAllServices({ app, models });
+    return restoreResult;
+  };
+
+  startMaintenanceServer({
+    express: app,
+    maintenancePath,
+    mainPath: path,
+    backup,
+    restore: restoreAndRegenerateAllServices,
+    authOptions: {
+      authType: 'SECRET',
+      secret: process.env.MAINTENANCE_SECRET
+    }
+  });
 
   // --- Schema setup
 

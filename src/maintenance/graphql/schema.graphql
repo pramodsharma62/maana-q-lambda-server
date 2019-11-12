@@ -1,0 +1,56 @@
+type Query {
+  info: MaintenanceInfo!
+}
+
+type MaintenanceInfo {
+  """Indicates if service is in the maintenance mode"""
+  maintenanceStatus: Boolean!
+  """Indicates type of token that this service accepts"""
+  tokenType: TokenType!
+  """Indicates what operation is in progress, if any"""
+  currentOperation: String
+}
+
+enum TokenType {
+  """Token must be OAUTH token with specific requirements, e.g. token with 'backup' grant """
+  OAUTH
+  """Predefined key, provided at deployment (e.g. as environment variable)"""
+  SECRET
+}
+
+type Mutation {
+  backup(
+    location: BackupLocation!
+    token: String!
+  ): Boolean!
+  
+  restore(
+    location: BackupLocation!
+    token: String!
+  ): Boolean!
+  
+  maintenance(
+    maintenanceStatus: Boolean!
+    token: String!
+  ): Boolean!
+}
+
+input BackupLocation {
+  locationType: LocationType!
+  
+  """Must be set when locationType is AZURE_FILE_STORE"""
+  azureFileStore: AzureFileStore
+}
+
+enum LocationType {
+  AZURE_FILE_STORE
+}
+
+input AzureFileStore {
+  """URL of the store. Must include SAS key"""
+  storeUrl: String!
+  """Name of the Azure File Store Share to be used"""
+  share: String!
+  """Folder in the store. Null value means that backup should be stored in the root of file store"""
+  folder: String
+}

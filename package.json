@@ -6,13 +6,14 @@
   "author": "Maana, Inc.",
   "private": true,
   "scripts": {
-    "dev": "nodemon src/index.js",
+    "dev": "MAINTENANCE_SECRET=SECRET nodemon src/index.js",
     "serve": "NODE_ENV=PRODUCTION node src/index.js"
   },
   "keywords": [
     "maana"
   ],
   "dependencies": {
+    "@azure/storage-file-share": "^12.0.0-preview.6",
     "apollo-server-express": "^2.9.7",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
