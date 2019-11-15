@@ -182,8 +182,19 @@ const generateService = async ({ lambdas, app }) => {
 };
 
 // ---
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
 
 const generateAllServices = async ({ app, models }) => {
+  // There's some caching either on mongodb or mongoose that returns emtpy result
+  // from find() for some time. I belive this is in mongoose as restarting service
+  // immediately returns all the data, but with restart time of few milliseconds
+  // it still gets into 100-200 ms threshold.
+  // Waiting for 100ms generally solves the issue, increasing this to 2.5 seconds just in case
+  await sleep(2500);
   // Get all of the lambdas and group them by service
   const allLambdas = await models.Lambda.find();
   const serviceLambdas = {};
