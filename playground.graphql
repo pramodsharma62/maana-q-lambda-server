@@ -32,7 +32,7 @@ mutation createLambda {
       name: "age"
       serviceId: "common"
       runtimeId: "Q+JavaScript"
-      code: "const dob = new Date(input.person.dob); const dobYear = dob.getFullYear(); const now = new Date();const nowYear = now.getFullYear();output = nowYear - dobYear;"
+      code: "const dob = new Date(input.person.dob); const dobYear = dob.getFullYear(); const now = new Date();const nowYear = now.getFullYear();const age = nowYear - dobYear;console.log(input, '=> age:', age);return age;"
       input: [{ name: "person", kind: "Person", modifiers: [NONULL] }]
       outputKind: "Int"
       outputModifiers: [NONULL]
@@ -84,7 +84,7 @@ mutation createLambda3 {
       name: "constructPerson"
       serviceId: "my_workspace"
       runtimeId: "Q+JavaScript"
-      code: "output = ({ name: input.name, dob: input.dob });"
+      code: "return { name: input.name, dob: input.dob }"
       input: [{ name: "name", kind: "String", modifiers: [NONULL] }, { name: "dob", kind: "Date", modifiers: [NONULL] }]
       outputKind: "Person"
       outputModifiers: [NONULL]
@@ -143,4 +143,26 @@ mutation deleteService2 {
 
 query listServices {
   listServices
+}
+
+query listPolyLambdas {
+  listLambdas(serviceId: "polyglot") {
+    ...lambdaFields
+  }
+}
+
+mutation createPolyLambda {
+  createLambda(
+    input: {
+      serviceId: "polyglot"
+      id: "hello+haskell"
+      name: "helloHaskell"
+      runtimeId: "Q+Haskell"
+      code: "import System.Environment\nmain = do\n  input <- getArgs\n  putStrLn $ head input"
+      input: [{ name: "name", kind: "String", modifiers: [NONULL] }]
+      outputKind: "STRING"
+    }
+  ) {
+    ...lambdaFields
+  }
 }

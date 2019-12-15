@@ -55,15 +55,15 @@ type Lambda {
 
 input LambdaInput {
   id: ID!
-  name: String
-  serviceId: ID
-  runtimeId: ID
-  code: String
+  name: String!
+  serviceId: ID!
+  runtimeId: ID!
+  code: String!
   input: [FieldInput!]
-  outputKind: String
+  outputKind: String!
   outputModifiers: [Modifier!]
   kinds: [KindInput!]
-  graphQLOperationType: GraphQLOperationType
+  graphQLOperationType: GraphQLOperationType = QUERY
 }
 
 type Query {
