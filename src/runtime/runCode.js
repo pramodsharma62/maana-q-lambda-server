@@ -20,10 +20,11 @@ const runCode = async ({ input, lambda, context }) =>
       const command = ExecutorMap[lambda.runtime.language];
       const cwd = tmpDir;
       const codeFile = path.join(tmpDir, lambda.name);
-      // logLambda(lambda, 'runCode', codeFile);
+      logLambda(lambda, 'runCode', command, codeFile, JSON.stringify(input));
       fs.writeFileSync(codeFile, lambda.code);
 
-      const process = spawn(command, [codeFile, JSON.stringify(input)], { cwd, shell: true });
+      const escape = str => str.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+      const process = spawn(command, [codeFile, escape(JSON.stringify(input))], { cwd, shell: true });
 
       const result = [];
       process.stdout.on('data', data => {
@@ -44,7 +45,7 @@ const runCode = async ({ input, lambda, context }) =>
         // if (this._isTmpFile) {
         //     fs.unlinkSync(this._codeFile);
         // }
-        context.log = log;
+        context.log = log.length ? log.join('') : undefined;
         resolve(result.join(''));
       });
     } catch (ex) {

@@ -151,14 +151,30 @@ query listPolyLambdas {
   }
 }
 
-mutation createPolyLambda {
+mutation createHaskellLambda {
   createLambda(
     input: {
       serviceId: "polyglot"
-      id: "hello+haskell"
+      id: "hello-haskell"
       name: "helloHaskell"
       runtimeId: "Q+Haskell"
       code: "import System.Environment\nmain = do\n  input <- getArgs\n  putStrLn $ head input"
+      input: [{ name: "name", kind: "String", modifiers: [NONULL] }]
+      outputKind: "STRING"
+    }
+  ) {
+    ...lambdaFields
+  }
+}
+
+mutation createPythonLambda {
+  createLambda(
+    input: {
+      serviceId: "polyglot"
+      id: "hello-pyhon"
+      name: "helloPython"
+      runtimeId: "Q+Python"
+      code: "import sys\nimport json\n\ninput = json.loads(sys.argv[1])\n\nprint(\"Hello, \" + input[\"name\"])"
       input: [{ name: "name", kind: "String", modifiers: [NONULL] }]
       outputKind: "STRING"
     }

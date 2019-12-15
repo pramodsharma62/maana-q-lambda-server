@@ -71,7 +71,7 @@ const ExecutorMap = {
   Pascal: 'cd $dir && fpc $fileName && $dir$fileNameWithoutExt',
   Perl: 'perl',
   Perl6: 'perl6',
-  Python: 'python -u',
+  Python: 'python3 -u',
   R: 'Rscript',
   Racket: 'racket',
   Ruby: 'ruby',
