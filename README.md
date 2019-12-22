@@ -24,7 +24,17 @@ Lambda code has access to the following modules:
 
 ### Python
 
+- macOS: `brew install python`
+
 ### Haskell
+
+[ghcup](https://www.haskell.org/ghcup/)
+
+`curl https://get-ghcup.haskell.org -sSf | sh`
+
+### R
+
+- macOS: `brew install r`
 
 ## AWS
 
