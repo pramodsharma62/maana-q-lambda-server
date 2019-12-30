@@ -1,7 +1,7 @@
 // --- External imports
 
 // --- Internal imports
-const { SupportedRuntimes } = require('../../runtime');
+const { SupportedRuntimes } = require('../../runtime/enums');
 const { generateService, removeService } = require('../');
 
 // --- Implementation

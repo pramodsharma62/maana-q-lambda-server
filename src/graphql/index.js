@@ -251,7 +251,16 @@ const removeService = ({ id, app }) => {
 const generateEndpoint = ({ schema, context, path, app }) => {
   const server = new ApolloServer({
     schema,
-    context
+    context,
+    extensions: [
+      () => ({
+        willSendResponse(o) {
+          const { context, graphqlResponse } = o;
+          graphqlResponse.extensions = context.log;
+          return o;
+        }
+      })
+    ]
   });
   server.applyMiddleware({ path, app });
 };
