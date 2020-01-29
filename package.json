@@ -1,6 +1,6 @@
 {
   "name": "maana-lambda-server",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Dynamically synthesize GraphQL endpoints that run JavaScript or Python code snippets in a sandbox as resolvers",
   "main": "src/index.js",
   "author": "Maana, Inc.",
