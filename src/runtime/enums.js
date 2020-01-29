@@ -86,7 +86,10 @@ const ExecutorMap = {
 
 const mkRuntimeId = (host, language) => `${host}+${language}`;
 
-const QRuntimes = Object.keys(Languages).map(language => ({ host: Hosts.Q, language }));
+const QLanguages = [Languages.JavaScript, Languages.Python];
+// Object.keys(Languages).map(language => ({ host: Hosts.Q, language }));
+
+const QRuntimes = QLanguages.map(language => ({ host: Hosts.Q, language }));
 
 const SupportedRuntimes = [
   ...QRuntimes,
