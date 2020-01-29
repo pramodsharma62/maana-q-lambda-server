@@ -127,30 +127,32 @@ const generateSchema = ({ lambdas }) => {
 
   const cache = {};
 
-  lambdas.forEach(lambda => {
-    const args = {};
-    lambda.input.forEach(arg => {
-      args[arg.name] = {
-        type: getGraphQLType({ cache, name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda })
+  lambdas
+    .sort((a, b) => (a._id.getTimestamp() > b._id.getTimestamp() ? -1 : 1)) // QP-835
+    .forEach(lambda => {
+      const args = {};
+      lambda.input.forEach(arg => {
+        args[arg.name] = {
+          type: getGraphQLType({ cache, name: arg.kind, modifiers: arg.modifiers, isInput: true, lambda })
+        };
+      });
+      const op = {
+        type: getGraphQLType({
+          cache,
+          name: lambda.outputKind,
+          modifiers: lambda.outputModifiers,
+          isInput: false,
+          lambda
+        }),
+        args,
+        resolve: generateResolver({ lambda })
       };
+      if (lambda.graphQLOperationType === GraphQLOperationTypes.MUTATION) {
+        mutations[lambda.name] = op;
+      } else {
+        queries[lambda.name] = op;
+      }
     });
-    const op = {
-      type: getGraphQLType({
-        cache,
-        name: lambda.outputKind,
-        modifiers: lambda.outputModifiers,
-        isInput: false,
-        lambda
-      }),
-      args,
-      resolve: generateResolver({ lambda })
-    };
-    if (lambda.graphQLOperationType === GraphQLOperationTypes.MUTATION) {
-      mutations[lambda.name] = op;
-    } else {
-      queries[lambda.name] = op;
-    }
-  });
 
   const query = new graphql.GraphQLObjectType({
     name: 'Query',
