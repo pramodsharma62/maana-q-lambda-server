@@ -130,6 +130,14 @@ const generateSchema = ({ lambdas }) => {
   lambdas
     .sort((a, b) => (a._id.getTimestamp() > b._id.getTimestamp() ? -1 : 1)) // QP-835
     .forEach(lambda => {
+      // QP-835 (part 2)
+      // In the event of a deleted function that we didn't find out about and
+      // a new function is created with the same name, we want to take the latest
+      // version.  We'll get this for by using the first one we see, since this
+      // list is sorted for QP-835 (part 1).  So, all we do is check that we aren't
+      // overwriting a function (query or mutation) with the same name.
+      const collection = lambda.graphQLOperationType === GraphQLOperationTypes.MUTATION ? mutations : queries;
+      if (collection[lambda.name]) return;
       const args = {};
       lambda.input.forEach(arg => {
         args[arg.name] = {
@@ -147,11 +155,7 @@ const generateSchema = ({ lambdas }) => {
         args,
         resolve: generateResolver({ lambda })
       };
-      if (lambda.graphQLOperationType === GraphQLOperationTypes.MUTATION) {
-        mutations[lambda.name] = op;
-      } else {
-        queries[lambda.name] = op;
-      }
+      collection[lambda.name] = op;
     });
 
   const query = new graphql.GraphQLObjectType({
