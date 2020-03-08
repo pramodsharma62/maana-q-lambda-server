@@ -25,7 +25,6 @@ spec:
       - env:
         - name: MONGODB_HOST
           value: maana-q-lambda-server-db:27017
-        image: services.azurecr.io/PROJECT_ID/APPLICATION_NAME:TAG
         name: maana-q-lambda-server
         ports:
         - containerPort: 4000
