@@ -59,8 +59,8 @@ jobs:
     - uses: azure/k8s-deploy@v1
       with:
         manifests: |
-          manifests/deployment.yml
-          manifests/service.yml
+          maana-q-lambda-server-deployment.yaml
+          maana-q-lambda-server-service.yaml
         images: |
           ${{ env.REGISTRY_NAME }}.azurecr.io/maana-q-lambda-server:${{ github.sha }}
         imagepullsecrets: |

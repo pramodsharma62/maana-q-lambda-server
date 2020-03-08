@@ -15,4 +15,5 @@ kubectl get serviceaccount -o yaml
                             --scopes /subscriptions/c73d0ee9-3ec0-402e-b7eb-2d5a99e9f0f0/resourceGroups/maanaQ \
                             --sdk-auth
 
+az acr repository show-tags -n services --repository maana-q-lambda-server
                             
