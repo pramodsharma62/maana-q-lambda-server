@@ -40,7 +40,6 @@ jobs:
     - uses: azure/k8s-actions/k8s-set-context@master
       with:
         kubeconfig: '${{ secrets.kubeconfig }}'
-        context: 'maanaq-K8s-sharma'  # Optional, uses the current-context from kubeconfig by default
       id: login        
     
     # Create namespace if doesn't exist
