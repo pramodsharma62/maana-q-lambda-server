@@ -37,11 +37,6 @@ jobs:
         docker push ${{ env.REGISTRY_NAME }}.azurecr.io/maana-q-lambda-server:${{ github.sha }}
     
     # Set the target Azure Kubernetes Service (AKS) cluster. 
-    - uses: azure/aks-set-context@v1
-      with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        cluster-name: ${{ env.CLUSTER_NAME }}
-        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
     - uses: azure/k8s-actions/k8s-set-context@master
       with:
         kubeconfig: '${{ secrets.kubeconfig }}'
