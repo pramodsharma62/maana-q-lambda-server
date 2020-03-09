@@ -16,4 +16,6 @@ kubectl get serviceaccount -o yaml
                             --sdk-auth
 
 az acr repository show-tags -n services --repository maana-q-lambda-server
+
+kubectl create secret generic lambda --from-env-file=.env
                             

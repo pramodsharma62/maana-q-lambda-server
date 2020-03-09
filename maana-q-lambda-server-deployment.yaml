@@ -27,6 +27,14 @@ spec:
           value: maana-q-lambda-server-db:27017
         image: services.azurecr.io/maana-q-lambda-server:latest
         name: maana-q-lambda-server
+        volumeMounts:
+        - name: lambda-env
+          mountPath: "/app"
+          readOnly: true
+      volumes:
+      - name: lambda-env
+        secret:
+          secretName: lambda        
         ports:
         - containerPort: 4000
         resources: {}
