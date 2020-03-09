@@ -31,12 +31,13 @@ spec:
         - name: lambda-env
           mountPath: "/app"
           readOnly: true
+        ports:
+        - containerPort: 4000          
       volumes:
       - name: lambda-env
         secret:
           secretName: lambda        
-        ports:
-        - containerPort: 4000
+
         resources: {}
       restartPolicy: Always
 status: {}
