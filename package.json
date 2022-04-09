@@ -26,7 +26,7 @@
     "lodash": "^4.17.15",
     "maana-physical-quantity-ast": "^3.2.2-beta.50",
     "mathjs": "^6.6.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mongoose": "^5.8.11",
     "object-hash": "^2.0.1",
     "request": "^2.88.0",
